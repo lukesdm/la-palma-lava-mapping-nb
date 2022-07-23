@@ -68,7 +68,7 @@ def lava_mean_similarity(segment_data: geopandas.GeoSeries) -> float:
     MEAN_STD = 13.1
 
     mean_similarity = numpy.interp(
-        x = segment_data.post_mean,
+        x = segment_data["mean"],
         xp = [MEAN_MEAN - 1.5 * MEAN_STD, MEAN_MEAN - 0.5 * MEAN_STD, MEAN_MEAN + 0.5 * MEAN_STD, MEAN_MEAN + 1.5 * MEAN_STD],
         fp = [0.0, 1.0, 1.0, 0.0] )
 
@@ -79,7 +79,7 @@ def lava_std_similarity(segment_data: geopandas.GeoSeries) -> float:
     # Stats of stats - from empirical sampling of lava field segments from 2021-11-15 imagery, n=108.
 
     std_similarity = numpy.interp(
-        x = segment_data.post_std,
+        x = segment_data["std"],
         xp = [18.0, 26.0, 38.0, 51.0],
         fp = [0.0, 1.0, 1.0, 0.0] )
 
@@ -147,13 +147,33 @@ def extract_lava_region(gdf, start_segment_id):
     return gdf[gdf["group"] == start_segment_id].dissolve()
 
 
-def enrich(xds, gdf, date):
-    # Calculate statistical features for segments. Available functions are listed here:
-    # https://xarray.pydata.org/en/v0.11.3/generated/xarray.core.groupby.DataArrayGroupBy.html
-    segments = xds.groupby('segment_id')
-    gdf["mean"] = segments.mean()
-    gdf["std"] = segments.std()
+def segment_stats(xds_image):
+    """
+    Calculate segment pixel statistics: mean; standard deviation.
+
+    Note:
+      * These are calculated for all dates, effectively using a single segmentation result as a mask layer,
+        i.e., same segment, different day.
+      * This would be impractical for larger datasets, where subsetting would be appropriate.
+    """
     
+    # Available stat/aggregate functions are listed here:
+    # https://xarray.pydata.org/en/v0.11.3/generated/xarray.core.groupby.DataArrayGroupBy.html
+    segments = xds_image.groupby('segment_id')
+    means = segments.mean()
+    stds = segments.std()
+    return xarray.Dataset({"mean": means, "std":stds})
+
+
+def enrich(gdf, xds_segstats, date):
+    """Enrich the GeoDataFrame with 1. the segment stats, and 2. lava-likeness metrics derived from these."""
+
+    gdf["mean"] = xds_segstats.sel(date=date)["mean"]
+    gdf["std"] = xds_segstats.sel(date=date)["std"]
+
     gdf["lava_mean_similarity"] = gdf.apply(lava_mean_similarity, axis=1)
     gdf["lava_std_similarity"] = gdf.apply(lava_std_similarity, axis=1)
     gdf["segment_lava_likeness"] = gdf.apply(segment_lava_likeness, axis=1)
+
+    # gdf was modified in-place, so nothing to return.
+    return None

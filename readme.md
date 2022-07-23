@@ -2,11 +2,15 @@
 
 ## Getting started
 
-This notebook was developed in a Microsoft Planetary Computer Jupyter environment.
+This notebook was developed in a [Pangeo](https://github.com/pangeo-data/pangeo-docker-images) container environment.
 
-You should be able to just upload the contents to your own environment on MPC, and run the notebooks - all dependencies should be already in place.
+To run locally, allowing editing from your host machine:
 
-Alternatively, docker images are available (TODO: link).
+```
+docker run -it --rm --volume $(pwd):/home/jovyan/lplm -p 127.0.0.1:8888:8888 pangeo/pangeo-notebook:latest jupyter lab --ip 0.0.0.0 lplm
+```
+
+Then connect with http://localhost:8888.
 
 ## Credits
 
