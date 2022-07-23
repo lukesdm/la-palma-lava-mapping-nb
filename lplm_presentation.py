@@ -1,6 +1,9 @@
 import ipyleaflet
 import geopandas
 import numpy
+from ipyleaflet import Choropleth
+from branca.colormap import linear
+import json
 
 import base64
 
@@ -30,3 +33,22 @@ def make_sar_layer(xds, date):
         url=data_url,
         bounds=bounds_leaf,
         name=f"SAR (gamma0) @ {format_date(date)}")
+
+def make_feature_layer(gdf, feature):
+    # COULDDO: check feature exists in dataframe, pass in from dropdown
+    
+    # Prepare geojson input for ipyleaflet's wacky choropleth interface.
+    # Thanks to Abdishakur, https://towardsdatascience.com/ipyleaflet-interactive-mapping-in-jupyter-notebook-994f19611e79
+    geojson = json.loads(gdf.loc[:, ["segment_id", "geometry"]].to_crs("EPSG:4326").to_json())
+    for gjfeature in geojson["features"]:
+        properties = gjfeature["properties"]
+        gjfeature.update(id=properties["segment_id"])
+
+    layer = Choropleth(
+        geo_data = geojson,
+        choro_data = gdf[feature].to_dict(),
+        colormap=linear.viridis, # TODO: Parameterize
+        style = { "fillOpacity": 0.5, "weight": 1.0 },
+        name=f"Segment {feature}")
+
+    return layer

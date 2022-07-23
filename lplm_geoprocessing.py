@@ -57,6 +57,23 @@ def vectorize_segments(xds):
 
     return gdf
 
+def get_segment_id(gdf, x, y, delta = 0.1):
+    """
+    Get segment id for the given point.
+
+    Note:
+    
+    * Lookup is performed with a very small bounding box, and it's possible multiple
+    segments intersect. The first match is selected.
+    
+    * An optional `delta` argument can be set if operating at a different scale or CRS
+    """
+    segment_id = gdf.cx[
+        x:x + delta,
+        y:y + delta
+    ].iloc[0]["segment_id"]
+    return segment_id
+
 
 ## Lava analysis and region growing
 ## --------------------------------
@@ -86,7 +103,7 @@ def lava_std_similarity(segment_data: geopandas.GeoSeries) -> float:
     return std_similarity
 
 # Calculate lava-likeness index. Input should be a GeoSeries representing a single object
-def segment_lava_likeness(segment_data: geopandas.GeoSeries) -> float:
+def local_lava_likeness(segment_data: geopandas.GeoSeries) -> float:
     ll = (segment_data.lava_mean_similarity + segment_data.lava_std_similarity) / 2
     return ll
 
@@ -114,7 +131,7 @@ def neighbourhood_lava_likeness(gdf, segment_id) -> float:
     # neighbors_of_neighbors = get_neighbors_of_neighbors(gdf, segment_id)
     
     return (
-        0.5 * gdf.loc[segment_id]["segment_lava_likeness"] + 
+        0.5 * gdf.loc[segment_id]["local_lava_likeness"] + 
         0.5 * neighbors["neighbourhood_lava_likeness"].sum() / len(neighbors) )
 
 
@@ -128,7 +145,7 @@ def get_unvisited_neighbors(gdf, segment_id, group_id):
 LL_THRESHOLD = 0.5
 
 def lava_likeness_overall(gdf, start_segment_id):
-    gdf["neighbourhood_lava_likeness"] = gdf["segment_lava_likeness"]
+    gdf["neighbourhood_lava_likeness"] = gdf["local_lava_likeness"]
     gdf["group"] = gdf.segment_id
     gdf.at[start_segment_id, "neighbourhood_lava_likeness"] = 1.0
     to_visit = [start_segment_id]
@@ -173,7 +190,7 @@ def enrich(gdf, xds_segstats, date):
 
     gdf["lava_mean_similarity"] = gdf.apply(lava_mean_similarity, axis=1)
     gdf["lava_std_similarity"] = gdf.apply(lava_std_similarity, axis=1)
-    gdf["segment_lava_likeness"] = gdf.apply(segment_lava_likeness, axis=1)
+    gdf["local_lava_likeness"] = gdf.apply(local_lava_likeness, axis=1)
 
     # gdf was modified in-place, so nothing to return.
     return None
