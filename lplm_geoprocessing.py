@@ -77,7 +77,6 @@ def get_segment_id(gdf, x, y, delta = 0.1):
 
 ## Lava analysis and region growing
 ## --------------------------------
-## TODO: Below is failing or untested - fix it.
 
 def lava_mean_similarity(segment_data: geopandas.GeoSeries) -> float:
     # Stats of stats - from empirical sampling of lava field segments from 2021-11-15 imagery, n=108.
@@ -94,10 +93,14 @@ def lava_mean_similarity(segment_data: geopandas.GeoSeries) -> float:
 # Standard deviation (analog of texture) similarity.
 def lava_std_similarity(segment_data: geopandas.GeoSeries) -> float:
     # Stats of stats - from empirical sampling of lava field segments from 2021-11-15 imagery, n=108.
+    STD_LOW = 18.0
+    STD_Q1 = 26.0
+    STD_Q2 = 38.0
+    STD_HIGH = 51.0
 
     std_similarity = numpy.interp(
         x = segment_data["std"],
-        xp = [18.0, 26.0, 38.0, 51.0],
+        xp = [STD_LOW, STD_Q1, STD_Q2, STD_HIGH],
         fp = [0.0, 1.0, 1.0, 0.0] )
 
     return std_similarity
