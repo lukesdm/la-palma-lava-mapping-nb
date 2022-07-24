@@ -24,7 +24,7 @@ def make_sar_layer(xds, date):
     Note: Uses data-uri format so that no files have to be served.
     This is ok for small images, like jpegs of our study area. 
     """
-    bounds_4326 = xds.rio.transform_bounds("+init=epsg:4326")
+    bounds_4326 = xds.rio.transform_bounds("epsg:4326")
     bounds_leaf = (bounds_4326[1], bounds_4326[0]), (bounds_4326[3], bounds_4326[2])
     # Use a .jpg version for presentation, due to the smaller file size.
     img_path = lpio.get_jpg(date)
