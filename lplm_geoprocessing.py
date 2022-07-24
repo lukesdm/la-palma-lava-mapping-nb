@@ -78,29 +78,27 @@ def get_segment_id(gdf, x, y, delta = 0.1):
 ## Lava analysis and region growing
 ## --------------------------------
 
-def lava_mean_similarity(segment_data: geopandas.GeoSeries) -> float:
-    # Stats of stats - from empirical sampling of lava field segments from 2021-11-15 imagery, n=108.
-    MEAN_MEAN = 79.8
-    MEAN_STD = 13.1
+def lava_mean_similarity(segment_data: geopandas.GeoSeries, training_sample: geopandas.GeoDataFrame) -> float:
+    mean_mean = training_sample["mean"].mean()
+    mean_std = training_sample["std"].std()
 
     mean_similarity = numpy.interp(
         x = segment_data["mean"],
-        xp = [MEAN_MEAN - 1.5 * MEAN_STD, MEAN_MEAN - 0.5 * MEAN_STD, MEAN_MEAN + 0.5 * MEAN_STD, MEAN_MEAN + 1.5 * MEAN_STD],
+        xp = [mean_mean - 1.5 * mean_std, mean_mean - 0.5 * mean_std, mean_mean + 0.5 * mean_std, mean_mean + 1.5 * mean_std],
         fp = [0.0, 1.0, 1.0, 0.0] )
 
     return mean_similarity
 
 # Standard deviation (analog of texture) similarity.
-def lava_std_similarity(segment_data: geopandas.GeoSeries) -> float:
-    # Stats of stats - from empirical sampling of lava field segments from 2021-11-15 imagery, n=108.
-    STD_LOW = 18.0
-    STD_Q1 = 26.0
-    STD_Q2 = 38.0
-    STD_HIGH = 51.0
-
+def lava_std_similarity(segment_data: geopandas.GeoSeries, training_sample: geopandas.GeoDataFrame) -> float:
+    std_low = training_sample["std"].quantile(0.0)
+    std_q1 = training_sample["std"].quantile(0.25)
+    std_q3 = training_sample["std"].quantile(0.75)
+    std_high = training_sample["std"].quantile(1.0)
+    
     std_similarity = numpy.interp(
         x = segment_data["std"],
-        xp = [STD_LOW, STD_Q1, STD_Q2, STD_HIGH],
+        xp = [std_low, std_q1, std_q3, std_high],
         fp = [0.0, 1.0, 1.0, 0.0] )
 
     return std_similarity
@@ -144,7 +142,7 @@ def get_unvisited_neighbors(gdf, segment_id, group_id):
     return new_neighbors
 
 
-# COULDDO: Parameterize
+# TODO: Parameterize
 LL_THRESHOLD = 0.5
 
 def lava_likeness_overall(gdf, start_segment_id):
@@ -185,14 +183,23 @@ def segment_stats(xds_image):
     return xarray.Dataset({"mean": means, "std":stds})
 
 
-def enrich(gdf, xds_segstats, date):
-    """Enrich the GeoDataFrame with 1. the segment stats, and 2. lava-likeness metrics derived from these."""
+def enrich_stats(gdf, xds_segstats, date):
+    """Enrich the GeoDataFrame with the segment stats"""
 
     gdf["mean"] = xds_segstats.sel(date=date)["mean"]
     gdf["std"] = xds_segstats.sel(date=date)["std"]
 
-    gdf["lava_mean_similarity"] = gdf.apply(lava_mean_similarity, axis=1)
-    gdf["lava_std_similarity"] = gdf.apply(lava_std_similarity, axis=1)
+    # gdf was modified in-place, so nothing to return.
+    return None
+
+def enrich_lava_likeness(gdf, training_sample):
+    """
+    Enrich the GeoDataFrame with the derived lavalikeness metrics, based on the given sample.
+
+    The sample should be from known lava flow.
+    """
+    gdf["lava_mean_similarity"] = gdf.apply(lambda gds: lava_mean_similarity(gds, training_sample), axis=1)
+    gdf["lava_std_similarity"] = gdf.apply(lambda gds: lava_std_similarity(gds, training_sample), axis=1)
     gdf["local_lava_likeness"] = gdf.apply(local_lava_likeness, axis=1)
 
     # gdf was modified in-place, so nothing to return.
