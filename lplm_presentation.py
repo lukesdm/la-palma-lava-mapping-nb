@@ -52,3 +52,11 @@ def make_feature_layer(gdf, feature):
         name=f"Segment {feature}")
 
     return layer
+
+def find_layers(m: ipyleaflet.Map, name: str):
+    """Gets map layer(s) with the specified name"""
+    layers = []
+    for l in m.layers:
+        if l.name == name:
+            layers.append(l)
+    return layers

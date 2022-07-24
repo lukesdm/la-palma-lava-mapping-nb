@@ -6,6 +6,7 @@ using Sentinel-1 imagery.
 ## Main contents
 📁 `data` - Source imagery. See [About the data](#about-the-data).  
 📁 `data-jpg`  - JPEG versions of the source imagery, for presentation.  
+📁 `ems-reference`  - Copernicus Emergency Rapid Mapping reference files.  
 📄 `01_overview.ipynb` - The notebook.  
 📄 `Dockerfile` - The Docker image definition.  
 📄 `lplm_*.py` - Scripts that contain the bulk of the logic - algorithms, data handling, presentation helpers etc.     
@@ -54,6 +55,7 @@ Upload the files from this repository to your environment, and you should now be
 
 * Copernicus Sentinel-1 GRD; IW; VV; Ascending(?); Gamma0, subsetted using Synergise Sentinel-Hub WMS; CRS=3857 (rookie error made early on). TODO: expand.
 
+* Copernicus EMS Rapid Mapping: https://emergency.copernicus.eu/mapping/ems/volcano-eruption-la-palma-spain
 
 
 ## Credits
