@@ -14,6 +14,9 @@ from lplm_utils import format_date
 def get_date_labels(xds):
     return [(format_date(d), d) for d in xds.sortby("date").date.values]
 
+def sar_layer_name(date):
+    return f"SAR (GRD, VV, gamma0) @ {format_date(date)}"
+
 def make_sar_layer(xds, date):
     """
     Creates a raster layer for the SAR data for the given date.
@@ -32,7 +35,7 @@ def make_sar_layer(xds, date):
     return ipyleaflet.ImageOverlay(
         url=data_url,
         bounds=bounds_leaf,
-        name=f"SAR (gamma0) @ {format_date(date)}")
+        name=sar_layer_name(date))
 
 def make_feature_layer(gdf, feature):
     # COULDDO: check feature exists in dataframe, pass in from dropdown
@@ -60,3 +63,10 @@ def find_layers(m: ipyleaflet.Map, name: str):
         if l.name == name:
             layers.append(l)
     return layers
+
+def replace_layer(m: ipyleaflet.Map, old_name: str, new_layer: ipyleaflet.Layer):
+    haystack = find_layers(m, old_name) if old_name == new_layer.name else [*find_layers(m, old_name), *find_layers(m, new_layer.name)]
+    for l in haystack:
+        m.remove(l)
+    m.add_layer(new_layer)
+    return None
