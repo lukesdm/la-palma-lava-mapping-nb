@@ -64,8 +64,9 @@ def find_layers(m: ipyleaflet.Map, name: str):
             layers.append(l)
     return layers
 
-def replace_layer(m: ipyleaflet.Map, old_name: str, new_layer: ipyleaflet.Layer):
-    haystack = find_layers(m, old_name) if old_name == new_layer.name else [*find_layers(m, old_name), *find_layers(m, new_layer.name)]
+def replace_layer(m: ipyleaflet.Map, new_layer: ipyleaflet.Layer, old_name: str = None):
+    """Removes any old matching layers, and adds the new one"""
+    haystack = find_layers(m, new_layer.name) if (old_name == new_layer.name or old_name is None) else [*find_layers(m, old_name), *find_layers(m, new_layer.name)]
     for l in haystack:
         m.remove(l)
     m.add_layer(new_layer)
