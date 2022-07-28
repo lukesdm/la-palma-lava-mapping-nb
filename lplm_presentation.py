@@ -40,7 +40,7 @@ def make_sar_layer(xds, date):
 def make_feature_layer(gdf, feature):
     # COULDDO: check feature exists in dataframe, pass in from dropdown
     
-    # Prepare geojson input for ipyleaflet's wacky choropleth interface.
+    # Prepare geojson input for ipyleaflet's choropleth interface.
     # Thanks to Abdishakur, https://towardsdatascience.com/ipyleaflet-interactive-mapping-in-jupyter-notebook-994f19611e79
     geojson = json.loads(gdf.loc[:, ["segment_id", "geometry"]].to_crs("EPSG:4326").to_json())
     for gjfeature in geojson["features"]:
