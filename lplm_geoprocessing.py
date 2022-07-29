@@ -192,14 +192,14 @@ def enrich_stats(gdf, xds_segstats, date):
     # gdf was modified in-place, so nothing to return.
     return None
 
-def enrich_lava_likeness(gdf, training_sample):
+def enrich_lava_likeness(gdf, reference_sample):
     """
-    Enrich the GeoDataFrame with the derived lavalikeness metrics, based on the given sample.
+    Enrich the GeoDataFrame with the derived lavalikeness metrics, based on the given reference sample.
 
     The sample should be from known lava flow.
     """
-    gdf["lava_mean_similarity"] = gdf.apply(lambda gds: lava_mean_similarity(gds, training_sample), axis=1)
-    gdf["lava_std_similarity"] = gdf.apply(lambda gds: lava_std_similarity(gds, training_sample), axis=1)
+    gdf["lava_mean_similarity"] = gdf.apply(lambda gds: lava_mean_similarity(gds, reference_sample), axis=1)
+    gdf["lava_std_similarity"] = gdf.apply(lambda gds: lava_std_similarity(gds, reference_sample), axis=1)
     gdf["local_lava_likeness"] = gdf.apply(local_lava_likeness, axis=1)
 
     # gdf was modified in-place, so nothing to return.
