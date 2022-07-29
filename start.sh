@@ -1,5 +1,5 @@
 # If running with Git Bash in Windows
-MSYS_NO_PATHCONV=1
+export MSYS_NO_PATHCONV=1
 
 # Build and run the docker environment; it is approximately 1GB in size.
 # Once ready, look out for the link announcing the URL, which includes the token.
