@@ -53,15 +53,26 @@ To enable it:
 
 Upload the files from this repository to your environment, and you should now be able to run the notebook. 
 
+## Example results
+
+Results of running the workflow for 15th November 2021:
+
+![Example results for 15th November 2021](example-results-2021-11-15.jpg)
+
+
 ## About the data
 
-* Copernicus Sentinel-1 GRD; IW; VV; Ascending(?); Gamma0, subsetted using Synergise Sentinel-Hub WMS; CRS=3857 (rookie error made early on). TODO: expand.
-
-* Copernicus EMS Rapid Mapping: https://emergency.copernicus.eu/mapping/ems/volcano-eruption-la-palma-spain
-
+* Copernicus Sentinel-1 GRD:
+  * Acquisition mode: Interferometric wide swath (IW)
+  * Signal type: Backscatter intensity (linear) -  𝛾0  (radiometrically terrain corrected)
+  * Polarisation: VV
+  * Orbit: Ascending
+  * DEM correction: 30m Mapzen
 
 ## Credits
 
-Imagery - Copernicus Sentinel-1, European Space Agency
+* Imagery - Copernicus Sentinel-1, European Space Agency
+
+* Reference maps - Copernicus EMS Rapid Mapping: https://emergency.copernicus.eu/mapping/ems/volcano-eruption-la-palma-spain
 
 [^start-win]: If on Windows, you can run the script using [Git Bash](https://gitforwindows.org/), or similar.
