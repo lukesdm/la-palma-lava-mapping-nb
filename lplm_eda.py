@@ -26,3 +26,21 @@ def plot_segment_histos(xds_grd, segment_ids, date):
         axes[row,0].set_title(f"")
     plt.tight_layout()
     plt.show()
+
+def plot_segment_stats_dists(gdf_sample):
+    """"Plot boxplots and histograms of the segments' means and standard deviations"""
+    fig, axes = plt.subplots(nrows=2, sharex=True, gridspec_kw={"height_ratios": (0.66, 0.34)} )
+    fig.suptitle("Sample segment means")
+    gdf_sample["mean"].plot.hist(ax=axes[0], bins=40, range=(0,255))
+    gdf_sample["mean"].plot.box(ax=axes[1], vert=False)
+    axes[1].set_yticks([0], "")
+    plt.xlabel("Segment mean $\gamma_{0}$ (pixel value)")
+    
+    fig, axes = plt.subplots(nrows=2, sharex=True, gridspec_kw={"height_ratios": (0.66, 0.34)} )
+    fig.suptitle("Sample segment standard deviations")
+    gdf_sample["std"].plot.hist(ax=axes[0], bins=40, range=(0,128))
+    gdf_sample["std"].plot.box(ax=axes[1], vert=False)
+    axes[1].set_yticks([0], "")
+    plt.xlabel("Segment std. $\gamma_{0}$ (pixel value)")
+    
+    plt.show()

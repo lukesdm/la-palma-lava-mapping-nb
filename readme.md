@@ -3,6 +3,8 @@
 A [JupyterLab](https://jupyter.org/) notebook and associated scripts for the analsyis and semi-automated mapping of the La Palma *Cumbre Vieja* eruption (September-December 2021),
 using Sentinel-1 imagery.
 
+⚠: This is experimental code. Expect it to be slow and fragile (but hopefully not too much).
+
 ## Main contents
 📁 `data` - Source imagery. See [About the data](#about-the-data).  
 📁 `data-jpg`  - JPEG versions of the source imagery, for presentation.  
@@ -51,15 +53,28 @@ To enable it:
 
 Upload the files from this repository to your environment, and you should now be able to run the notebook. 
 
+## Example results
+
+Results of running the workflow for 15th November 2021:
+
+![Example results for 15th November 2021](example-results-2021-11-15.jpg)
+
+
 ## About the data
 
-* Copernicus Sentinel-1 GRD; IW; VV; Ascending(?); Gamma0, subsetted using Synergise Sentinel-Hub WMS; CRS=3857 (rookie error made early on). TODO: expand.
-
-* Copernicus EMS Rapid Mapping: https://emergency.copernicus.eu/mapping/ems/volcano-eruption-la-palma-spain
-
+* Copernicus Sentinel-1 GRD:
+  * Acquisition mode: Interferometric wide swath (IW)
+  * Signal type: Backscatter intensity (linear) -  𝛾0  (radiometrically terrain corrected)
+  * Polarisation: VV
+  * Orbit: Ascending
+  * DEM correction: 30m Mapzen
 
 ## Credits
 
-Imagery - Copernicus Sentinel-1, European Space Agency
+* Imagery - Copernicus Sentinel-1, European Space Agency
+
+* Reference maps - Copernicus EMS Rapid Mapping: https://emergency.copernicus.eu/mapping/ems/volcano-eruption-la-palma-spain
+
+* GEOBIA with Python - [Open Source Options](https://opensourceoptions.com/blog/python-geographic-object-based-image-analysis-geobia/)
 
 [^start-win]: If on Windows, you can run the script using [Git Bash](https://gitforwindows.org/), or similar.
