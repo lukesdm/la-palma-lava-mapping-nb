@@ -54,7 +54,8 @@ def make_feature_layer(gdf, feature):
         style = { "fillOpacity": 0.5, "weight": 1.0 },
         name=f"Segment {feature}")
 
-    return layer
+    colorbar = linear.viridis.scale(gdf[feature].min(), gdf[feature].max())
+    return layer, colorbar
 
 def find_layers(m: ipyleaflet.Map, name: str):
     """Gets map layer(s) with the specified name"""
