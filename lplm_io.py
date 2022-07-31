@@ -19,10 +19,6 @@ def load_series(data_dir="data"):
         xarrs.append(xarr)
     return xarray.concat(xarrs, "date")
 
-# def img_path(data_dir, date: numpy.datetime64) -> Path:
-#    stem = str(date)[:10]
-#    return Path(data_dir, f"{stem}.tif")
-
 def get_jpg(date: numpy.datetime64, data_dir="data-jpg") -> Path:
     stem = format_date(date)
     path = Path(data_dir, f"{stem}.jpg")

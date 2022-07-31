@@ -75,4 +75,6 @@ Results of running the workflow for 15th November 2021:
 
 * Reference maps - Copernicus EMS Rapid Mapping: https://emergency.copernicus.eu/mapping/ems/volcano-eruption-la-palma-spain
 
+* GEOBIA with Python - [Open Source Options](https://opensourceoptions.com/blog/python-geographic-object-based-image-analysis-geobia/)
+
 [^start-win]: If on Windows, you can run the script using [Git Bash](https://gitforwindows.org/), or similar.

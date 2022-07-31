@@ -1,30 +1,27 @@
-import ipyleaflet
-import geopandas
-import numpy
-from ipyleaflet import Choropleth
-from branca.colormap import linear
-import json
-
 import base64
+import ipyleaflet
+from ipyleaflet import Choropleth
+import json
+from branca.colormap import linear
 
 import lplm_io as lpio
 
 from lplm_utils import format_date
 
-def get_date_labels(xds):
-    return [(format_date(d), d) for d in xds.sortby("date").date.values]
+def get_date_labels(xds_grd):
+    return [(format_date(d), d) for d in xds_grd.sortby("date").date.values]
 
 def sar_layer_name(date):
     return f"SAR (GRD, VV, gamma0) @ {format_date(date)}"
 
-def make_sar_layer(xds, date):
+def make_sar_layer(xds_grd, date):
     """
     Creates a raster layer for the SAR data for the given date.
 
     Note: Uses data-uri format so that no files have to be served.
     This is ok for small images, like jpegs of our study area. 
     """
-    bounds_4326 = xds.rio.transform_bounds("epsg:4326")
+    bounds_4326 = xds_grd.rio.transform_bounds("epsg:4326")
     bounds_leaf = (bounds_4326[1], bounds_4326[0]), (bounds_4326[3], bounds_4326[2])
     # Use a .jpg version for presentation, due to the smaller file size.
     img_path = lpio.get_jpg(date)
@@ -38,8 +35,6 @@ def make_sar_layer(xds, date):
         name=sar_layer_name(date))
 
 def make_feature_layer(gdf, feature):
-    # COULDDO: check feature exists in dataframe, pass in from dropdown
-    
     # Prepare geojson input for ipyleaflet's choropleth interface.
     # Thanks to Abdishakur, https://towardsdatascience.com/ipyleaflet-interactive-mapping-in-jupyter-notebook-994f19611e79
     geojson = json.loads(gdf.loc[:, ["segment_id", "geometry"]].to_crs("EPSG:4326").to_json())
@@ -50,7 +45,7 @@ def make_feature_layer(gdf, feature):
     layer = Choropleth(
         geo_data = geojson,
         choro_data = gdf[feature].to_dict(),
-        colormap=linear.viridis, # COULDDO: Parameterize
+        colormap=linear.viridis,
         style = { "fillOpacity": 0.5, "weight": 1.0 },
         name=f"Segment {feature}")
 
