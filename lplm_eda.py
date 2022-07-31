@@ -29,12 +29,18 @@ def plot_segment_histos(xds_grd, segment_ids, date):
 
 def plot_segment_stats_dists(gdf_sample):
     """"Plot boxplots and histograms of the segments' means and standard deviations"""
-    fig, axes = plt.subplots(
-        ncols=2,
-        nrows=2,
-        figsize=[6.4,10] )
-    gdf_sample["mean"].plot.hist(ax=axes[0,0], bins=40, title="Sample segment means", range=(0,255)); plt.xlabel("value")
-    gdf_sample["mean"].plot.box(ax=axes[0,1], title="Sample segment means"); plt.ylim(0, 255)
-    gdf_sample["std"].plot.hist(ax=axes[1,0], bins=40, title="Sample segment standard deviations", range=(0,255)); plt.xlabel("value")
-    gdf_sample["std"].plot.box(ax=axes[1,1], title="Sample segment standard deviations"); plt.ylim(0, 128)
+    fig, axes = plt.subplots(nrows=2, sharex=True, gridspec_kw={"height_ratios": (0.66, 0.34)} )
+    fig.suptitle("Sample segment means")
+    gdf_sample["mean"].plot.hist(ax=axes[0], bins=40, range=(0,255))
+    gdf_sample["mean"].plot.box(ax=axes[1], vert=False)
+    axes[1].set_yticks([0], "")
+    plt.xlabel("Segment mean $\gamma_{0}$ (pixel value)")
+    
+    fig, axes = plt.subplots(nrows=2, sharex=True, gridspec_kw={"height_ratios": (0.66, 0.34)} )
+    fig.suptitle("Sample segment standard deviations")
+    gdf_sample["std"].plot.hist(ax=axes[0], bins=40, range=(0,128))
+    gdf_sample["std"].plot.box(ax=axes[1], vert=False)
+    axes[1].set_yticks([0], "")
+    plt.xlabel("Segment std. $\gamma_{0}$ (pixel value)")
+    
     plt.show()
