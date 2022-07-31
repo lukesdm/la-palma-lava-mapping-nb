@@ -80,7 +80,7 @@ def get_segment_id(gdf, x, y, delta = 0.1):
 
 def lava_mean_similarity(segment_data: geopandas.GeoSeries, training_sample: geopandas.GeoDataFrame) -> float:
     mean_mean = training_sample["mean"].mean()
-    mean_std = training_sample["std"].std()
+    mean_std = training_sample["mean"].std()
 
     mean_similarity = numpy.interp(
         x = segment_data["mean"],
