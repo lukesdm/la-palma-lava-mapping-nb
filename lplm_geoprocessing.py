@@ -142,10 +142,11 @@ def get_unvisited_neighbors(gdf, segment_id, group_id):
     return new_neighbors
 
 
-# TODO: Parameterize
+# COULDDO: Parameterize this. But, have to also consider the weighting of the components. 
 LL_THRESHOLD = 0.5
 
 def lava_likeness_overall(gdf, start_segment_id):
+    """Final lava-likeness calculation"""
     gdf["neighbourhood_lava_likeness"] = gdf["local_lava_likeness"]
     gdf["group"] = gdf.segment_id
     gdf.at[start_segment_id, "neighbourhood_lava_likeness"] = 1.0

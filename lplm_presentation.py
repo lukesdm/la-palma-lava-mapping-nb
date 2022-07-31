@@ -50,7 +50,7 @@ def make_feature_layer(gdf, feature):
     layer = Choropleth(
         geo_data = geojson,
         choro_data = gdf[feature].to_dict(),
-        colormap=linear.viridis, # TODO: Parameterize
+        colormap=linear.viridis, # COULDDO: Parameterize
         style = { "fillOpacity": 0.5, "weight": 1.0 },
         name=f"Segment {feature}")
 
