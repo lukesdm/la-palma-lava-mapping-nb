@@ -13,7 +13,7 @@ def apply_segmentation(xds: xarray.Dataset,
                        date: numpy.datetime64,
                        n_segments = 5000,
                        compactness = 0.1):
-    """Performs SLIC0 segmentation on the image on the given date, adding a 'segment_id' variable to the dataset"""
+    """Performs SLIC0 segmentation on the image for the given date, adding a 'segment_id' variable to the dataset"""
     # Segments an image according to:
     # https://docs.dea.ga.gov.au/notebooks/Frequently_used_code/Image_segmentation.html
     #
