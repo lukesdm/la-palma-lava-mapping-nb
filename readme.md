@@ -10,15 +10,23 @@ using Sentinel-1 imagery.
 📁 `data-jpg`  - JPEG versions of the source imagery, for presentation.  
 📁 `ems-reference`  - Copernicus Emergency Rapid Mapping reference files.  
 📄 `01_overview.ipynb` - The notebook.  
-📄 `Dockerfile` - The Docker image definition.  
+📄 `.Dockerfile` - The Docker image definition.  
 📄 `lplm_*.py` - Scripts that contain the bulk of the logic - algorithms, data handling, presentation helpers etc.     
 📄 `readme.md` - You're reading it.  
 📄 `start.sh` - Script for running locally.
+
 ## Getting started
 
 The notebook is developed using a [Pangeo](https://github.com/pangeo-data/pangeo-docker-images)-based Docker JupyterLab environment.
 
 The dataset is quite small, so is stored alongside the code in this repository.
+
+### MyBinder
+
+**Now available on MyBinder - this is probably the easiest way to run this.**
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lukesdm/la-palma-lava-mapping-nb/environment)
+
 
 ### Running locally
 
