@@ -25,7 +25,7 @@ The dataset is quite small, so is stored alongside the code in this repository.
 
 **Now available on MyBinder - this is probably the easiest way to run this.**
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lukesdm/la-palma-lava-mapping-nb/environment)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lukesdm/la-palma-lava-mapping-nb/HEAD)
 
 
 ### Running locally
