@@ -1,3 +1,4 @@
+from typing import Callable
 import geopandas
 import numpy
 import pandas
@@ -78,30 +79,21 @@ def get_segment_id(gdf, x, y, delta = 0.1):
 ## Lava analysis and region growing
 ## --------------------------------
 
-def lava_mean_similarity(segment_data: geopandas.GeoSeries, training_sample: geopandas.GeoDataFrame) -> float:
-    mean_mean = training_sample["mean"].mean()
-    mean_std = training_sample["mean"].std()
+def make_similarity_func(field: str, reference_sample: geopandas.GeoDataFrame) -> Callable[[geopandas.GeoSeries], float]:
+    low = reference_sample[field].quantile(0.0)
+    q1 = reference_sample[field].quantile(0.25)
+    q3 = reference_sample[field].quantile(0.75)
+    high = reference_sample[field].quantile(1.0)
 
-    mean_similarity = numpy.interp(
-        x = segment_data["mean"],
-        xp = [mean_mean - 1.5 * mean_std, mean_mean - 0.5 * mean_std, mean_mean + 0.5 * mean_std, mean_mean + 1.5 * mean_std],
-        fp = [0.0, 1.0, 1.0, 0.0] )
+    f = lambda seg_data: numpy.interp(
+        x = seg_data[field],
+        xp = [low, q1, q3, high],
+        fp = [0.25, 1.0, 1.0, 0.25],
+        left = 0,
+        right = 0 )
 
-    return mean_similarity
+    return f
 
-# Standard deviation (analog of texture) similarity.
-def lava_std_similarity(segment_data: geopandas.GeoSeries, training_sample: geopandas.GeoDataFrame) -> float:
-    std_low = training_sample["std"].quantile(0.0)
-    std_q1 = training_sample["std"].quantile(0.25)
-    std_q3 = training_sample["std"].quantile(0.75)
-    std_high = training_sample["std"].quantile(1.0)
-    
-    std_similarity = numpy.interp(
-        x = segment_data["std"],
-        xp = [std_low, std_q1, std_q3, std_high],
-        fp = [0.0, 1.0, 1.0, 0.0] )
-
-    return std_similarity
 
 # Calculate lava-likeness index. Input should be a GeoSeries representing a single object
 def local_lava_likeness(segment_data: geopandas.GeoSeries) -> float:
@@ -133,7 +125,7 @@ def neighbourhood_lava_likeness(gdf, segment_id) -> float:
     
     return (
         0.5 * gdf.loc[segment_id]["local_lava_likeness"] + 
-        0.5 * neighbors["neighbourhood_lava_likeness"].sum() / len(neighbors) )
+        0.5 * neighbors["local_lava_likeness"].sum() / len(neighbors) )
 
 
 def get_unvisited_neighbors(gdf, segment_id, group_id):
@@ -203,8 +195,12 @@ def enrich_lava_likeness(gdf, reference_sample):
 
     The sample should be from known lava flow.
     """
-    gdf["lava_mean_similarity"] = gdf.apply(lambda gds: lava_mean_similarity(gds, reference_sample), axis=1)
-    gdf["lava_std_similarity"] = gdf.apply(lambda gds: lava_std_similarity(gds, reference_sample), axis=1)
+
+    lava_mean_similarity = make_similarity_func("mean", reference_sample)
+    lava_std_similarity = make_similarity_func("std", reference_sample)
+
+    gdf["lava_mean_similarity"] = gdf.apply(lambda gds: lava_mean_similarity(gds), axis=1)
+    gdf["lava_std_similarity"] = gdf.apply(lambda gds: lava_std_similarity(gds), axis=1)
     gdf["local_lava_likeness"] = gdf.apply(local_lava_likeness, axis=1)
 
     # gdf was modified in-place, so nothing to return.
