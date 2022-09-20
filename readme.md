@@ -3,6 +3,8 @@
 A [JupyterLab](https://jupyter.org/) notebook and associated scripts for the analsyis and semi-automated mapping of the La Palma *Cumbre Vieja* eruption (September-December 2021),
 using Sentinel-1 imagery.
 
+The notebook gives an overview of the processing involved, and for further information there is an associated seminar paper available [here](https://lukesdm.github.io/geoportfolio/amrs/paper.html).
+
 ⚠: This is experimental code. Expect it to be slow and fragile (but hopefully not too much).
 
 ## Main contents
